@@ -15,6 +15,7 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import DownloadIcon from '@mui/icons-material/Download';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import { BaixariaPallete } from '../../helpers/types';
 import { DownloadQueueServices } from '../../services/routes/users/downloadQueueServices';
 import ToastBar from '../../components/ToastBar/ToastBar';
@@ -23,7 +24,8 @@ export default function Home() {
   const [link, setLink] = useState<string>('');
   const [path, setPath] = useState<string>('');
   const [downloadType, setDownloadType] = useState<string>('AUDIO');
-  const [audioType, setAudioType] = useState<string>('M4A');
+  const [audioType, setAudioType] = useState<string>('mp3');
+  const [videoType, setVideoType] = useState<string>('mp4');
   const [loading, setLoading] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string | undefined>(undefined);
@@ -63,8 +65,14 @@ export default function Home() {
     setLoading(true);
     try {
       const downloadQueueService = new DownloadQueueServices();
-      // Envia url, path, type e audioType para o backend
-      const response = await downloadQueueService.create({ url: link, path, type: downloadType, audioType });
+      // Envia url, path, type, audioType e videoType para o backend
+      const response = await downloadQueueService.create({ 
+        url: link, 
+        path, 
+        type: downloadType, 
+        audioType, 
+        videoType 
+      });
       setSnackbarType('success');
       setSnackbarMessage(response.message);
       setSnackbarOpen(true);
@@ -87,6 +95,7 @@ export default function Home() {
         alignItems="center"
         justifyContent="center"
         height="100vh"
+        marginTop={4}
         sx={{ background: BaixariaPallete.Background }}
       >
         {snackbarOpen && (
@@ -111,7 +120,7 @@ export default function Home() {
           boxShadow={3}
           sx={{ marginTop: '-5%' }}
         >
-          <Typography variant="h4" component="h1" gutterBottom sx={{ color: BaixariaPallete.PrimaryText }}>
+          <Typography variant="h3" fontWeight={'bold'} component="h1" gutterBottom sx={{ color: BaixariaPallete.PrimaryText }}>
             Baixaria
           </Typography>
           <TextField
@@ -141,8 +150,8 @@ export default function Home() {
             }}
           />
           <TextField
-            placeholder="Insira o caminho da pasta..."
             label="Caminho"
+            placeholder="Insira o caminho da pasta..."
             variant="filled"
             fullWidth
             value={path}
@@ -166,34 +175,37 @@ export default function Home() {
               ),
             }}
           />
+          {/* Combobox de Tipo de Download */}
+          <TextField
+            select
+            label="Tipo de Download"
+            variant="filled"
+            fullWidth
+            value={downloadType}
+            onChange={(e) => setDownloadType(e.target.value)}
+            sx={{
+              background: BaixariaPallete.InputField,
+              borderRadius: 6,
+              mb: 3,
+              "& .MuiFilledInput-underline:before": { borderBottom: "none" },
+              "& .MuiFilledInput-underline:after": { borderBottom: "none" },
+            }}
+            InputLabelProps={{
+              style: { color: BaixariaPallete.Background },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <DownloadIcon sx={{ color: BaixariaPallete.ErrorButton }} />
+                </InputAdornment>
+              ),
+            }}
+          >
+            <MenuItem value="VIDEO">Vídeo</MenuItem>
+            <MenuItem value="AUDIO">Áudio</MenuItem>
+          </TextField>
+          {/* Linha com os comboboxes de Tipo de Áudio e Tipo de Vídeo */}
           <Box display="flex" width="100%" gap={2} mb={3}>
-            <TextField
-              select
-              label="Tipo de Download"
-              variant="filled"
-              fullWidth
-              value={downloadType}
-              onChange={(e) => setDownloadType(e.target.value)}
-              sx={{
-                background: BaixariaPallete.InputField,
-                borderRadius: 6,
-                "& .MuiFilledInput-underline:before": { borderBottom: "none" },
-                "& .MuiFilledInput-underline:after": { borderBottom: "none" },
-              }}
-              InputLabelProps={{
-                style: { color: BaixariaPallete.Background },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <DownloadIcon sx={{ color: BaixariaPallete.ErrorButton }} />
-                  </InputAdornment>
-                ),
-              }}
-            >
-              <MenuItem value="VIDEO">Vídeo</MenuItem>
-              <MenuItem value="AUDIO">Áudio</MenuItem>
-            </TextField>
             <TextField
               select
               label="Tipo de Áudio"
@@ -219,9 +231,38 @@ export default function Home() {
                 ),
               }}
             >
-              <MenuItem value="M4A">M4a</MenuItem>
-              <MenuItem value="MP3">Mp3</MenuItem>
-              <MenuItem value="WAV">WAV</MenuItem>
+              <MenuItem value="m4a">M4A</MenuItem>
+              <MenuItem value="mp3">MP3</MenuItem>
+              <MenuItem value="wav">WAV</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="Tipo de Vídeo"
+              variant="filled"
+              fullWidth
+              value={videoType}
+              onChange={(e) => setVideoType(e.target.value)}
+              disabled={downloadType !== 'VIDEO'}
+              sx={{
+                background: BaixariaPallete.InputField,
+                borderRadius: 6,
+                "& .MuiFilledInput-underline:before": { borderBottom: "none" },
+                "& .MuiFilledInput-underline:after": { borderBottom: "none" },
+              }}
+              InputLabelProps={{
+                style: { color: BaixariaPallete.Background },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <VideoLibraryIcon sx={{ color: BaixariaPallete.ErrorButton }} />
+                  </InputAdornment>
+                ),
+              }}
+            >
+              <MenuItem value="mkv">MKV</MenuItem>
+              <MenuItem value="mp4">MP4</MenuItem>
+              <MenuItem value="webm">WEBM</MenuItem>
             </TextField>
           </Box>
           <Button

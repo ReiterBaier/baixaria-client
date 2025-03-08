@@ -51,6 +51,8 @@ const LayoutBase = ({ children }: LayoutBaseProps) => {
             </Button>
             <Button
               href="/dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
               sx={{
                 color: BaixariaPallete.PrimaryText,
                 fontSize: '1.2rem',

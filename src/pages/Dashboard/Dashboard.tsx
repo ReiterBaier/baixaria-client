@@ -6,6 +6,8 @@ export default function Dashboard() {
     <Box
       width={'100%'}
       height={'100vh'}
+      marginTop={6}
+      flex={1}
     >
       {" "}
       <iframe
